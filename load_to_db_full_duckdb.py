@@ -11,7 +11,7 @@ conn.execute("CREATE SCHEMA IF NOT EXISTS imdb;")
 csv_dir = './data/imdb_datasets'
 
 # Get all CSV files in the directory
-csv_files = [f for f in os.listdir(csv_dir) if f.endswith('.tsv')]
+csv_files = [f for f in os.listdir(csv_dir) if f.endswith('.tsv') and not f.endswith('_tail.tsv')]
 
 # Iterate through each CSV file and import it into DuckDB
 for csv_file in csv_files:
@@ -20,6 +20,7 @@ for csv_file in csv_files:
     
     # Import CSV into DuckDB table
     #conn.execute(f"COPY {table_name} FROM '{csv_path}' (AUTO_DETECT TRUE);")
+    # TODO: Optimize data types? By default it uses BIGINT for numeric fields instead of INTEGER so it can impact size of resulting db file (now ~7GB)
     print(f"Creating table: {table_name} from: {csv_path}")
     conn.execute(f"""
         CREATE TABLE imdb.{table_name} AS 
